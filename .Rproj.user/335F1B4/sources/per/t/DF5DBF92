@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1510889968578.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2268833691",
+    "id" : "DF5DBF92",
+    "lastKnownWriteTime" : 1510924928,
+    "last_content_update" : 1510924928232,
+    "path" : "~/WSU/Final_projects/DA_GREAT_watered/R/functions_great_CBM.R",
+    "project_path" : "R/functions_great_CBM.R",
+    "properties" : {
+        "cursorPosition" : "965,46",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
