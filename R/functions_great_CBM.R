@@ -1,5 +1,10 @@
 #----------------------------------------------------------------------------------------------------------------
-#- This is a collection of many functions that run the CBM. These functions
+# Developed by Kashif Mahmud (November 2017)
+# k.mahmud@westernsydney.edu.au
+#----------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------
+#- This is a collection of many functions that run the MCMC with CBM. These functions
 #    are called by just a few lines of code in "CentralScript.R" to recreate the analyses and figures.
 #----------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------
@@ -46,16 +51,13 @@ logLikelihood.great.final <- function (no.param.par.var,data.set,output,with.sto
 
 #----------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------
-# Carbon balance model (CBM)
-# Developed by Kashif Mahmud and Belinda Medlyn (March 2017)
-# k.mahmud@westernsydney.edu.au
-
+# Main function to run MCMC simulation with Carbon balance model (CBM)
 # This version tries to group various treatments according to their similarities to have a trend in paramter settings
 
 # This code carries out Bayesian calibration for 5 variables (allocation fractions: "k","Y",af","as","sf") on 
 # various temporal scales (e.g. 1,2,...,121 days) to estimate Carbon pools (Cstorage,Cleaf,Cwood,Croot) and fluxes
 #-------------------------------------------------------------------------------------
-CBM.great <- function(chainLength, no.param.par.var, treat.group, with.storage, model.comparison, model.optimization) {
+mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage, model.comparison, model.optimization) {
   
   source("R/load_packages_great.R")
   
@@ -723,7 +725,7 @@ CBM.great <- function(chainLength, no.param.par.var, treat.group, with.storage, 
 #----------------------------------------------------------------------------------------------------------------
 
 
-#-- Function to run Carbon Balance Model (CBM). 
+#-- Function to run MCMC simulation with Carbon Balance Model (CBM)
 #-----------------------------------------------------------------------------------------
 # This script define the model equations to carry out Bayesian calibration for 
 # 5 variables (allocation fractions: "k","Y",af","as","sf") on 
@@ -840,7 +842,7 @@ model.monthly <- function (data.set,j,Y,k,af,as) {
 #----------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------
 
-#-- Function to run Carbon Balance Model (CBM) without considering storage pool. 
+#-- Function to run MCMC simulation with Carbon Balance Model (CBM) without considering storage pool 
 #-----------------------------------------------------------------------------------------
 # This script define the model equations to carry out Bayesian calibration for 
 # 4 variables (allocation fractions: "Y",af","as","sf") on 

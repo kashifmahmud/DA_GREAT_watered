@@ -1152,10 +1152,7 @@ dev.off()
 
 #-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------
-# Analysing Plant Storage (TNC) partitioning for Cstorage pool prediction
-# source("R/TNC_analysis_Duan.R")
-
-# Import TNC data from Duan's experiment
+# Import TNC data from Duan's experiment to let the CBM know the TNC partitioning
 carbohydrates.tnc = read.csv("data/Duan_carbohydrates.csv")
 harvest.tnc = read.csv("data/Duan_harvest.csv")
 tnc = tnc.analysis(carbohydrates.tnc,harvest.tnc)
