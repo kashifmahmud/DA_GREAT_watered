@@ -178,7 +178,7 @@ final.harvest = final.harvest[final.harvest$W_treatment %in% as.factor("w"),]
 # final.harvest$Room = NULL
 final.harvest$Leafarea = rowSums(final.harvest[,c("Leafarea", "Leafarea_sub")], na.rm=T)
 final.harvest$Leafmass = rowSums(final.harvest[,c("Leafmass", "Leafmass_sub")], na.rm=T)
-final.harvest$Stemmass = rowSums(final.harvest[,c("Stemmass", "Stemmass_sub")], na.rm=T)
+# final.harvest$Stemmass = rowSums(final.harvest[,c("Stemmass", "Stemmass_sub")], na.rm=T) # Clarify from John about the experiment procedure
 final.harvest$Rootmass = rowSums(final.harvest[,c("Rootmass", "Rootmass_sub")], na.rm=T)
 final.harvest[c("Leafarea_sub","Leafmass_sub","Stemmass_sub","Rootmass_sub")] = NULL
 final.harvest[ , c("Leafmass", "Stemmass", "Rootmass")] = final.harvest[ , c("Leafmass", "Stemmass", "Rootmass")]/1000 # Unit conversion from mg to g
@@ -301,21 +301,25 @@ model.error = data.frame(attributes = as.factor(c("sm","rm","lm","la")),
 fit.sm = list()
 for (i in 1:(length(unique(harvest.data$Room)))) {
 # for (i in 1:(length(unique(harvest.data$Room))-1)) {
-    harvest.data.ind = subset(harvest.data, Room %in% i)
+  harvest.data.ind = subset(harvest.data, Room %in% i)
+  if (i == 5) {
+    harvest.data.ind$Height = 1.05*harvest.data.ind$Height
+    harvest.data.ind$D = 1.05*harvest.data.ind$D
+  }
   height.dia.ind = subset(height.dia, Room %in% i)
   fit.sm[[i]] <- lm(log(Stemmass) ~ log(D) + log(Height), data=harvest.data.ind)
   # summary(fit.sm[[i]])
-  # # Estimate the stemmass from the fitted linear regression equation
-  # eq = function(x,y){exp(coefficients(fit.sm[[i]])[1] + coefficients(fit.sm[[i]])[2] * log(x)  + coefficients(fit.sm[[i]])[3] * log(y))}
-  # 
-  # # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-  # height.dia$Stemmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
+  # Estimate the stemmass from the fitted linear regression equation
+  eq = function(x,y){exp(coefficients(fit.sm[[i]])[1] + coefficients(fit.sm[[i]])[2] * log(x)  + coefficients(fit.sm[[i]])[3] * log(y))}
+
+  # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+  height.dia$Stemmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
   if (i == 1) {
     rmse.sm = sum ((exp(fitted(fit.sm[[i]])) - harvest.data.ind$Stemmass)^2)
     }
   if (i > 1) {
     rmse.sm = rmse.sm + sum((exp(fitted(fit.sm[[i]])) - harvest.data.ind$Stemmass)^2)
-    }
+  }
 }
 model.rmse$rmse.individual[1] = sqrt( ( rmse.sm ) / nrow(harvest.data))
 model.error$error.individual[1] = model.rmse$rmse.individual[1] / mean(harvest.data$Stemmass) * 100 #Percentage Error
@@ -329,22 +333,26 @@ fit.rm = list()
 for (i in 1:(length(unique(harvest.data$Room)))) {
 # for (i in 1:(length(unique(harvest.data$Room))-1)) {
   harvest.data.ind = subset(harvest.data, Room %in% i)
+  if (i == 5) {
+    harvest.data.ind$Height = 1.05*harvest.data.ind$Height
+    harvest.data.ind$D = 1.05*harvest.data.ind$D
+  }
   height.dia.ind = subset(height.dia, Room %in% i)
   fit.rm[[i]] <- lm(log(Rootmass) ~ log(D) + log(Height), data=harvest.data.ind)
-  # # Estimate the stemmass from the fitted linear regression equation
-  # eq = function(x,y,t){exp(coefficients(fit.rm[[i]])[1] + coefficients(fit.rm[[i]])[2] * log(x)  + coefficients(fit.rm[[i]])[3] * log(y))}
-  # 
-  # #-----------------------------
+  # Estimate the stemmass from the fitted linear regression equation
+  eq = function(x,y,t){exp(coefficients(fit.rm[[i]])[1] + coefficients(fit.rm[[i]])[2] * log(x)  + coefficients(fit.rm[[i]])[3] * log(y))}
+
+  # # -----------------------------
   # # When we consider the temperature interactions
-  # # fit.rm[[i]] <- lm(log(Rootmass) ~ log(D) + log(Height) + log(D) : temp + log(Height) : temp, data=harvest.data.ind) # use temp interaction
-  # # 
-  # # # Estimate the stemmass from the fitted linear regression equation
-  # # eq = function(x,y,t){exp(coefficients(fit.rm[[i]])[1] + coefficients(fit.rm[[i]])[2] * log(x)  + coefficients(fit.rm[[i]])[3] * log(y) +
-  # #                          coefficients(fit.rm[[i]])[4] * log(x) * t + coefficients(fit.rm[[i]])[5] * log(y) * t)}
-  # #-----------------------------
+  # fit.rm[[i]] <- lm(log(Rootmass) ~ log(D) + log(Height) + log(D) : temp + log(Height) : temp, data=harvest.data.ind) # use temp interaction
   # 
-  # # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-  # height.dia$Rootmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height,height.dia.ind$temp)
+  # # Estimate the stemmass from the fitted linear regression equation
+  # eq = function(x,y,t){exp(coefficients(fit.rm[[i]])[1] + coefficients(fit.rm[[i]])[2] * log(x)  + coefficients(fit.rm[[i]])[3] * log(y) +
+  #                          coefficients(fit.rm[[i]])[4] * log(x) * t + coefficients(fit.rm[[i]])[5] * log(y) * t)}
+  # # -----------------------------
+
+  # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+  height.dia$Rootmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height,height.dia.ind$temp)
   if (i == 1) {
     rmse.rm = sum ((exp(fitted(fit.rm[[i]])) - harvest.data.ind$Rootmass)^2)
   }
@@ -364,14 +372,18 @@ fit.lm = list()
 for (i in 1:(length(unique(harvest.data$Room)))) {
 # for (i in 1:(length(unique(harvest.data$Room))-1)) {
   harvest.data.ind = subset(harvest.data, Room %in% i)
+  if (i == 5) {
+    harvest.data.ind$Height = 1.05*harvest.data.ind$Height
+    harvest.data.ind$D = 1.05*harvest.data.ind$D
+  }
   height.dia.ind = subset(height.dia, Room %in% i)
   fit.lm[[i]] <- lm(log(Leafmass) ~ log(D) + log(Height), data=harvest.data.ind)
   
-  # # Estimate the stemmass from the fitted linear regression equation
-  # eq = function(x,y){exp(coefficients(fit.lm[[i]])[1] + coefficients(fit.lm[[i]])[2] * log(x)  + coefficients(fit.lm[[i]])[3] * log(y))}
-  # 
-  # # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-  # height.dia$Leafmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
+  # Estimate the stemmass from the fitted linear regression equation
+  eq = function(x,y){exp(coefficients(fit.lm[[i]])[1] + coefficients(fit.lm[[i]])[2] * log(x)  + coefficients(fit.lm[[i]])[3] * log(y))}
+
+  # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+  height.dia$Leafmass[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
   if (i == 1) {
     rmse.lm = sum ((exp(fitted(fit.lm[[i]])) - harvest.data.ind$Leafmass)^2)
   }
@@ -391,14 +403,18 @@ fit.la = list()
 for (i in 1:(length(unique(harvest.data$Room)))) {
 # for (i in 1:(length(unique(harvest.data$Room))-1)) {
   harvest.data.ind = subset(harvest.data, Room %in% i)
+  if (i == 5) {
+    harvest.data.ind$Height = 1.05*harvest.data.ind$Height
+    harvest.data.ind$D = 1.05*harvest.data.ind$D
+  }
   height.dia.ind = subset(height.dia, Room %in% i)
   fit.la[[i]] <- lm(log(Leafarea) ~ log(D) + log(Height), data=harvest.data.ind)
   
-  # # Estimate the stemmass from the fitted linear regression equation
-  # eq = function(x,y){exp(coefficients(fit.la[[i]])[1] + coefficients(fit.la[[i]])[2] * log(x)  + coefficients(fit.la[[i]])[3] * log(y))}
-  # 
-  # # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-  # height.dia$Leafarea[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
+  # Estimate the stemmass from the fitted linear regression equation
+  eq = function(x,y){exp(coefficients(fit.la[[i]])[1] + coefficients(fit.la[[i]])[2] * log(x)  + coefficients(fit.la[[i]])[3] * log(y))}
+
+  # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+  height.dia$Leafarea[(1+(i-1)*nrow(height.dia.ind)):(i*nrow(height.dia.ind))] = eq(height.dia.ind$D,height.dia.ind$Height)
   if (i == 1) {
     rmse.la = sum (((exp(fitted(fit.la[[i]])) - harvest.data.ind$Leafarea)/100)^2) # unit consersion from cm2 to dm2
   }
@@ -420,11 +436,11 @@ model.error$error.combined[1] = model.rmse$rmse.combined[1] / mean(harvest.data$
 # cat("Linear regression model fitting: log(stem_mass) =", coefficients(fit.sm.combined)[1], "+", coefficients(fit.sm.combined)[2],
 #     "* log(diameter) +", coefficients(fit.sm.combined)[3], "* log(height) \nwith percentage error =", percentage.error.sm, "%")
 
-# Estimate the stemmass from the fitted linear regression equation
-eq = function(x,y){exp(coefficients(fit.sm.combined)[1] + coefficients(fit.sm.combined)[2] * log(x)  + coefficients(fit.sm.combined)[3] * log(y))}
-
-# Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-height.dia$Stemmass = eq(height.dia$D,height.dia$Height)
+# # Estimate the stemmass from the fitted linear regression equation
+# eq = function(x,y){exp(coefficients(fit.sm.combined)[1] + coefficients(fit.sm.combined)[2] * log(x)  + coefficients(fit.sm.combined)[3] * log(y))}
+# 
+# # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+# height.dia$Stemmass = eq(height.dia$D,height.dia$Height)
 
 
 fit.rm.combined <- lm(log(Rootmass) ~ log(D) + log(Height), data=harvest.data)
@@ -435,11 +451,11 @@ model.error$error.combined[2] = model.rmse$rmse.combined[2] / mean(harvest.data$
 # cat("Linear regression model fitting: log(root_mass) = ", coefficients(fit.rm.combined)[1], "+", coefficients(fit.rm.combined)[2],
 #     "* log(diameter) +", coefficients(fit.rm.combined)[3], "* log(height) \nwith percentage error =", percentage.error.rm, "%")
 
-# Estimate the stemmass from the fitted linear regression equation
-eq = function(x,y){exp(coefficients(fit.rm.combined)[1] + coefficients(fit.rm.combined)[2] * log(x)  + coefficients(fit.rm.combined)[3] * log(y))}
-
-# Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-height.dia$Rootmass = eq(height.dia$D,height.dia$Height)
+# # Estimate the stemmass from the fitted linear regression equation
+# eq = function(x,y){exp(coefficients(fit.rm.combined)[1] + coefficients(fit.rm.combined)[2] * log(x)  + coefficients(fit.rm.combined)[3] * log(y))}
+# 
+# # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+# height.dia$Rootmass = eq(height.dia$D,height.dia$Height)
 
 fit.lm.combined <- lm(log(Leafmass) ~ log(D) + log(Height), data=harvest.data)
 # summary(fit.lm) # show results
@@ -449,11 +465,11 @@ model.error$error.combined[3] = model.rmse$rmse.combined[3] / mean(harvest.data$
 # cat("Linear regression model fitting: log(leaf_mass) = ", coefficients(fit.lm.combined)[1], "+", coefficients(fit.lm.combined)[2],
 #     "* log(diameter) +", coefficients(fit.lm.combined)[3], "* log(height) \nwith percentage error =", percentage.error.lm, "%")
 
-# Estimate the stemmass from the fitted linear regression equation
-eq = function(x,y){exp(coefficients(fit.lm.combined)[1] + coefficients(fit.lm.combined)[2] * log(x)  + coefficients(fit.lm.combined)[3] * log(y))}
-
-# Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-height.dia$Leafmass = eq(height.dia$D,height.dia$Height)
+# # Estimate the stemmass from the fitted linear regression equation
+# eq = function(x,y){exp(coefficients(fit.lm.combined)[1] + coefficients(fit.lm.combined)[2] * log(x)  + coefficients(fit.lm.combined)[3] * log(y))}
+# 
+# # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+# height.dia$Leafmass = eq(height.dia$D,height.dia$Height)
 
 fit.la.combined <- lm(log(Leafarea) ~ log(D) + log(Height), data=harvest.data)
 # summary(fit.la) # show results
@@ -464,11 +480,11 @@ model.error$error.combined[4] = model.rmse$rmse.combined[4] / (mean(harvest.data
 # cat("Linear regression model fitting: log(leaf_area) = ", coefficients(fit.la.combined)[1], "+", coefficients(fit.la.combined)[2],
 #     "* log(diameter) +", coefficients(fit.la.combined)[3], "* log(height)\nwith percentage error =", percentage.error.la, "%")
 
-# Estimate the stemmass from the fitted linear regression equation
-eq = function(x,y){exp(coefficients(fit.la.combined)[1] + coefficients(fit.la.combined)[2] * log(x)  + coefficients(fit.la.combined)[3] * log(y))}
-
-# Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
-height.dia$Leafarea = eq(height.dia$D,height.dia$Height)
+# # Estimate the stemmass from the fitted linear regression equation
+# eq = function(x,y){exp(coefficients(fit.la.combined)[1] + coefficients(fit.la.combined)[2] * log(x)  + coefficients(fit.la.combined)[3] * log(y))}
+# 
+# # Calculate all seedling stem mass from height and diameter using the linear model and then get the SEs from the 7 replicas
+# height.dia$Leafarea = eq(height.dia$D,height.dia$Height)
 #-----------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------
