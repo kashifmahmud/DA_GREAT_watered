@@ -35,7 +35,7 @@ par(mfrow = c(1, 1), mar=c(5, 4, 2, 6))
 # bb = barplot(as.matrix(t(Ct.fraction.group)), ylim=c(0, 107), ylab = "C Partitioning (%)", xlab = "Treatments (Container size)",  
 #         col = rainbow(20),legend = colnames(Ct.fraction.group), 
 #         args.legend = list(x = "topright", bty = "n", inset=c(-0.15, 0)))
-bb = barplot(as.matrix(t(C.balance.fraction)), ylim=c(0, 335), ylab = "C Partitioning (%)", xlab = "Container size (L))",  
+bb = barplot(as.matrix(t(C.balance.fraction)), ylim=c(0, max(rowSums(C.balance.fraction))+10), ylab = "C Partitioning (%)", xlab = "Container size (L))",  
              col = cbPalette[1:4],legend = c(expression(R["m,tot"]),expression(C[s]),expression(R[g]),expression(C[n])), 
              args.legend = list(x = "topright", bty = "n", inset=c(-0.17, 0)))
 # text( bb, Ct.fraction.group[,1]+Ct.fraction.group[,2]+Ct.fraction.group[,3]+Ct.fraction.group[,4]+Ct.fraction.group[,5]+Ct.fraction.group[,6]+Ct.fraction.group[,7]-1, labels = round(Ct.group[,9],1), cex=.9)

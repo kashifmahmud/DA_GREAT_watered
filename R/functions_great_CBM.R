@@ -270,39 +270,47 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
           # if ( log(runif(1, min = 0, max =1)) < logalpha && candidatepValues$af[1] + candidatepValues$as[1] <= 1
           #      && candidatepValues$as[1] >= 0 && candidatepValues$af[1] >= 0 && candidatepValues$af[2] >= 0 && candidatepValues$af[3] >= 0 && candidatepValues$af[4] >= 0) {
           if (no.param.par.var == 4) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]*(nrow(data.set)) + candidatepValues$k[2]*(nrow(data.set))^2 + candidatepValues$k[3]*(nrow(data.set))^3 + candidatepValues$k[4]*(nrow(data.set))^4) >= 0
-                 && (candidatepValues$as[1]*(nrow(data.set)) + candidatepValues$as[2]*(nrow(data.set))^2 + candidatepValues$as[3]*(nrow(data.set))^3 + candidatepValues$as[4]*(nrow(data.set))^4) >= 0
-                 && (candidatepValues$af[1]*(nrow(data.set)) + candidatepValues$af[2]*(nrow(data.set))^2 + candidatepValues$af[3]*(nrow(data.set))^3 + candidatepValues$af[4]*(nrow(data.set))^4) >= 0) {
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2 + candidatepValues$k[4]*(nrow(data.set))^3) >= 0
+                 && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2 + candidatepValues$as[4]*(nrow(data.set))^3) >= 0
+                 && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2 + candidatepValues$af[4]*(nrow(data.set))^3) >= 0
+                 # && (1-candidatepValues$af[1]+candidatepValues$as[1]) >= 0
+                 && (1 - (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2 + candidatepValues$af[4]*(nrow(data.set))^3) - 
+                     (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2 + candidatepValues$as[4]*(nrow(data.set))^3)) >= 0 ) {
               pValues <- candidatepValues
               logPrior0 <- logPrior1
               logL0 <- logL1
             }
           } else if (no.param.par.var == 3) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]*(nrow(data.set)) + candidatepValues$k[2]*(nrow(data.set))^2 + candidatepValues$k[3]*(nrow(data.set))^3) >= 0
-                 && (candidatepValues$as[1]*(nrow(data.set)) + candidatepValues$as[2]*(nrow(data.set))^2 + candidatepValues$as[3]*(nrow(data.set))^3) >= 0
-                 && (candidatepValues$af[1]*(nrow(data.set)) + candidatepValues$af[2]*(nrow(data.set))^2 + candidatepValues$af[3]*(nrow(data.set))^3) >= 0) {
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2) >= 0
+                 && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2) >= 0
+                 && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2) >= 0
+                 && (1 - (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2) - 
+                     (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2)) >= 0 ) {
               pValues <- candidatepValues
               logPrior0 <- logPrior1
               logL0 <- logL1
             }
           } else if (no.param.par.var == 2) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]*(nrow(data.set)) + candidatepValues$k[2]*(nrow(data.set))^2) >= 0
-                 && (candidatepValues$as[1]*(nrow(data.set)) + candidatepValues$as[2]*(nrow(data.set))^2) >= 0
-                 && (candidatepValues$af[1]*(nrow(data.set)) + candidatepValues$af[2]*(nrow(data.set))^2) >= 0) {
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set))) >= 0
+                 && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set))) >= 0
+                 && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set))) >= 0
+                 && (1 - (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set))) - 
+                     (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)))) >= 0 ) {
               pValues <- candidatepValues
               logPrior0 <- logPrior1
               logL0 <- logL1
             }
           } else if (no.param.par.var == 1) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]*(nrow(data.set))) >= 0
-                 && (candidatepValues$as[1]*(nrow(data.set))) >= 0
-                 && (candidatepValues$af[1]*(nrow(data.set))) >= 0) {
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]) >= 0
+                 && (candidatepValues$as[1]) >= 0
+                 && (candidatepValues$af[1]) >= 0
+                 && (1 - candidatepValues$af[1] - candidatepValues$as[1]) >= 0 ) {
               pValues <- candidatepValues
               logPrior0 <- logPrior1
               logL0 <- logL1
             }
           } else {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && candidatepValues >= 0 && (candidatepValues$af + candidatepValues$as) < 1) {
+            if ( log(runif(1, min = 0, max =1)) < logalpha && candidatepValues >= 0 && all((candidatepValues$af + candidatepValues$as) < 1)) {
               pValues <- candidatepValues
               logPrior0 <- logPrior1
               logL0 <- logL1
@@ -1131,3 +1139,355 @@ plot.Modelled.biomass <- function(result,with.storage) {
 
 #----------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------
+################ Figure 4 #####################
+# Plot modelled parameters with 3 Grouped treatments and quadratic parameter setting
+#-------------------------------------------------------------------------------------
+plot.Modelled.parameters.great <- function(result,with.storage,treat.group) {
+  listOfDataFrames <- vector(mode = "list", length = nlevels(treat.group))
+  for (i in 1:nlevels(treat.group)) {
+    listOfDataFrames[[i]] <- data.frame(result[[i]][[1]])
+  }
+  no.param.par.var = do.call("rbind", listOfDataFrames)
+  names(no.param.par.var) = "no.param"
+  
+  listOfDataFrames <- vector(mode = "list", length = nlevels(treat.group))
+  for (i in 1:nlevels(treat.group)) {
+    listOfDataFrames[[i]] <- data.frame(result[[i]][[2]])
+  }
+  summary.param = do.call("rbind", listOfDataFrames)
+  cbPalette = c("gray", "skyblue", "orange", "green3", "yellow3", "#0072B2", "#D55E00")
+  # cbPalette = c("darkorange", "cyan", "firebrick", "deepskyblue3")
+  # cbPalette = c("cyan", "darkorange")
+  i = 0
+  font.size = 10
+  plot = list() 
+  if (with.storage==T) { 
+    var = as.factor(c("k","Y","af","as","ar"))
+    title = as.character(c("A","B","C","D","E"))
+  } else {
+    var = as.factor(c("Y","af","as","ar"))
+    title = as.character(c("A","B","C","D"))
+  }
+  pd <- position_dodge(0.5)
+  # no.param.par.var = result[[1]]
+  # summary.param = result[[2]]
+  # summary.data = result[[3]]
+  # summary.output = result[[4]]
+  # summary.error = result[[5]]
+  
+  for (p in 1:length(var)) {
+    summary.param.set.limit = subset(summary.param, variable %in% var[p])
+    for (z in 1:length(no.param.par.var)) {
+      summary.param.set = subset(summary.param, variable %in% var[p] & no.param %in% no.param.par.var$no.param[z])
+      i = i + 1
+      plot[[i]] = ggplot(data = summary.param.set, aes(x = Date, y = Parameter,  group = treatment, colour=factor(treatment))) +
+        geom_ribbon(data = summary.param.set, aes(ymin=Parameter-Parameter_SD, ymax=Parameter+Parameter_SD), linetype=2, alpha=0.1,size=0.1) +
+        geom_point(position=pd,size=0.01) +
+        geom_line(position=pd,data = summary.param.set, aes(x = Date, y = Parameter,  group = treatment, colour=factor(treatment)),size=1) +
+        # ylab(paste(as.character(var[p]),"(fraction)")) +
+        ylab(paste(as.character(var[p]))) +
+        labs(colour="Treatment") +
+        scale_color_manual(values=cbPalette[1:6]) +
+        scale_y_continuous(limits = c(min(summary.param.set.limit$Parameter)-2*max(summary.param.set.limit$Parameter_SD),
+                                      max(summary.param.set.limit$Parameter)+2*max(summary.param.set.limit$Parameter_SD))) +
+        annotate("text", x = min(summary.param.set$Date), y = max(summary.param.set$Parameter) + 2*max(summary.param.set$Parameter_SD), size = font.size-7, label = paste(title[p])) +
+        theme_bw() +
+        theme(legend.title = element_text(colour="black", size=font.size)) +
+        theme(legend.text = element_text(colour="black", size=font.size-3)) +
+        theme(legend.position = c(0.65,0.85)) +
+        theme(legend.key = element_blank()) +
+        theme(text = element_text(size=font.size)) +
+        theme(axis.title.x = element_blank()) +
+        theme(axis.title.y = element_text(size = font.size, vjust=0.3)) +
+        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+      
+      if (with.storage==T) { 
+        if (p==1) {
+          # plot[[i]] = plot[[i]] + scale_colour_manual(name="", breaks=c("1", "2", "3"),
+          #                                             labels=c("Small", "Large", "Free"), values=cbPalette[2:4]) +
+          plot[[i]] = plot[[i]] + scale_colour_manual(name="", values=cbPalette[1:6]) +
+            ylab(expression(k~"(g C "*g^"-1"*" C "*d^"-1"*")"))
+          plot[[i]] = plot[[i]] + theme(legend.key.height=unit(0.7,"line"))
+        } else if (p>1) {
+          plot[[i]] = plot[[i]] + guides(colour=FALSE)
+        } 
+        if (p==2) {
+          plot[[i]] = plot[[i]] + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 0.8), units="line"))
+        }
+        if (p==3) {
+          # plot[[i]] = plot[[i]] + ylab(expression(a[f]~"(fraction)")) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+          plot[[i]] = plot[[i]] + ylab(expression(a[f])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        if (p==4) {
+          plot[[i]] = plot[[i]] + ylab(expression(a[w])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        if (p==5) {
+          plot[[i]] = plot[[i]] + ylab(expression(a[r])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        # if (p==6) {
+        #   plot[[i]] = plot[[i]] + ylab(expression(s[f]~"(g C "*g^"-1"*" C "*d^"-1"*")"))
+        # }
+        # if (p==7) {
+        #   plot[[i]] = plot[[i]] + ylab(expression(s[r]~"(g C "*g^"-1"*" C "*d^"-1"*")"))
+        # }
+        
+      } else {
+        if (p==1) {
+          plot[[i]] = plot[[i]] + scale_colour_manual(name="", values=cbPalette[1:6])
+          plot[[i]] = plot[[i]] + theme(legend.key.height=unit(0.7,"line"))
+        } else if (p>1) {
+          plot[[i]] = plot[[i]] + guides(colour=FALSE)
+        } 
+        if (p==2) {
+          plot[[i]] = plot[[i]] + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 0.8), units="line"))
+          plot[[i]] = plot[[i]] + ylab(expression(a[f])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        if (p==3) {
+          plot[[i]] = plot[[i]] + ylab(expression(a[w])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        if (p==4) {
+          plot[[i]] = plot[[i]] + ylab(expression(a[r])) + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 1), units="line"))
+        }
+        # if (p==5) {
+        #   plot[[i]] = plot[[i]] + ylab(expression(s[f]~"(g C "*g^"-1"*" C "*d^"-1"*")"))
+        # }
+        # if (p==6) {
+        #   plot[[i]] = plot[[i]] + ylab(expression(s[r]~"(g C "*g^"-1"*" C "*d^"-1"*")"))
+        # }
+      }
+    }
+  }
+  
+  png("output/Figure_4_modelled_parameters.png", units="px", width=2000, height=2000, res=250)
+  print (do.call(grid.arrange,  plot))
+  dev.off()
+}
+
+#----------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------
+
+
+#----------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------
+
+################ Figure 5 #####################
+# Plot Daily analysis (lines) with optimum parameter setting and intermittent observations (symbols) of selected carbon stocks
+#-------------------------------------------------------------------------------------
+plot.Modelled.biomass.great <- function(result,with.storage,treat.group) { 
+  listOfDataFrames <- vector(mode = "list", length = nlevels(treat.group))
+  for (i in 1:nlevels(treat.group)) {
+    listOfDataFrames[[i]] <- data.frame(result[[i]][[4]])
+  }
+  summary.output = do.call("rbind", listOfDataFrames)
+  
+  listOfDataFrames <- vector(mode = "list", length = nlevels(treat.group))
+  for (i in 1:nlevels(treat.group)) {
+    listOfDataFrames[[i]] <- data.frame(result[[i]][[5]])
+  }
+  summary.error = do.call("rbind", listOfDataFrames)
+  
+  listOfDataFrames <- vector(mode = "list", length = nlevels(treat.group))
+  for (i in 1:nlevels(treat.group)) {
+    listOfDataFrames[[i]] <- data.frame(result[[i]][[7]])
+  }
+  summary.storage = do.call("rbind", listOfDataFrames)
+  cbPalette = c("gray", "skyblue", "orange", "green3", "yellow3", "#0072B2", "#D55E00")
+  # cbPalette = c("darkorange", "cyan", "firebrick", "deepskyblue3")
+  # cbPalette = c("cyan", "darkorange")
+  i = 0
+  font.size = 10
+  plot = list() 
+  # no.param.par.var = result[[1]]
+  # summary.param = result[[2]]
+  # summary.data = result[[3]]
+  # summary.output = result[[4]]
+  # summary.error = result[[5]]
+  if (with.storage==T) { 
+    meas = as.factor(c("LM","WM","RM"))
+    res = as.factor(c("Mleaf.modelled","Mwood.modelled","Mroot.modelled","Cstorage.modelled"))
+    error = as.factor(c("LM_SE","WM_SE","RM_SE"))
+    title = as.character(c("A","B","C"))
+  } else {
+    meas = as.factor(c("LM","WM","RM"))
+    res = as.factor(c("Mleaf.modelled","Mwood.modelled","Mroot.modelled"))
+    error = as.factor(c("LM_SE","WM_SE","RM_SE"))
+    title = as.character(c("A","B","C","D"))
+  }
+  pd <- position_dodge(2) # move the overlapped errorbars horizontally
+  for (p in 1:length(res)) {
+    # summary.data.Cpool = subset(summary.data,variable %in% meas[p])
+    # if (p==4) {
+    #   summary.output.Cpool$value = cumsum(summary.output.Cpool$value)
+    # }
+    
+    i = i + 1
+    if (res[p]=="Cstorage.modelled") {
+      plot[[i]] = ggplot() + 
+        # geom_point(position=pd,size=0.3) +
+        # geom_errorbar(position=pd,aes(ymin=parameter-value, ymax=parameter+value), colour="grey", width=0.5) +
+        # geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = interaction(volume,volume.group,no.param), linetype=volume.group, colour=volume, size=no.param)) +
+        # geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = interaction(volume,no.param), linetype=no.param, colour=volume)) +
+        geom_line(position=pd,data = summary.storage, aes(x = Date, y = Cstorage.modelled, group = treatment, colour=treatment)) +
+        ylab(paste(as.character(res[p]),"(g C)")) + xlab("Month") +
+        # ggtitle("C pools - Measured (points) vs Modelled (lines)") +
+        # labs(colour="Soil Volume", linetype="Grouping treatment", size="Total No of Parameter") +
+        # labs(colour="Pot Volume (L)", linetype="No. of Parameters") +
+        labs(colour="Treatment") +
+        scale_color_manual(values=cbPalette[1:6]) +
+        # scale_color_manual(labels = c("Individuals", "One Group"), values = c("blue", "red")) +
+        # coord_trans(y = "log10") + ylab(paste(as.character(meas[p]),"(g C plant-1)")) +
+        theme_bw() +
+        annotate("text", x = max(summary.storage$Date), y = min(summary.storage$Cstorage.modelled), size = font.size-7, label = paste(title[p])) +
+        theme(legend.title = element_text(colour="black", size=font.size-2)) +
+        theme(legend.text = element_text(colour="black", size = font.size-3)) +
+        theme(legend.key.height=unit(0.6,"line")) +
+        theme(legend.position = c(0.22,0.8)) +
+        theme(legend.key = element_blank()) +
+        theme(text = element_text(size=font.size)) +
+        theme(axis.title.x = element_blank()) +
+        theme(axis.title.y = element_text(size = font.size, vjust=0.3)) +
+        # theme(plot.title = element_text(hjust = 0)) +
+        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+      
+    } else {
+      summary.output.Cpool = subset(summary.output,variable %in% res[p])
+      summary.error.Cpool = subset(summary.error,variable %in% error[p])
+      
+      plot[[i]] = ggplot(summary.error.Cpool, aes(x=Date, y=parameter, group = treatment, colour=treatment)) + 
+        geom_point(position=pd) +
+        geom_errorbar(position=pd,aes(ymin=parameter-value, ymax=parameter+value), colour="grey", width=0.5) +
+        # geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = interaction(volume,volume.group,no.param), linetype=volume.group, colour=volume, size=no.param)) +
+        # geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = interaction(volume,no.param), linetype=no.param, colour=volume)) +
+        geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = treatment, colour=treatment)) +
+        ylab(paste(as.character(meas[p]),"(g C)")) + xlab("Month") +
+        labs(colour="Treatment") +
+        scale_color_manual(values=cbPalette[1:6]) +
+        # scale_color_manual(labels = c("Individuals", "One Group"), values = c("blue", "red")) +
+        # coord_trans(y = "log10") + ylab(paste(as.character(meas[p]),"(g C plant-1)")) +
+        theme_bw() +
+        annotate("text", x = max(summary.output.Cpool$Date), y = min(summary.output.Cpool$value), size = font.size-7, label = paste(title[p])) +
+        # theme(plot.title = element_text(size = 20, face = "bold")) +
+        theme(legend.title = element_text(colour="black", size=font.size-2)) +
+        theme(legend.text = element_text(colour="black", size = font.size-3)) +
+        theme(legend.key.height=unit(0.6,"line")) +
+        theme(legend.position = c(0.22,0.8)) +
+        theme(legend.key = element_blank()) +
+        theme(text = element_text(size=font.size)) +
+        theme(axis.title.x = element_blank()) +
+        theme(axis.title.y = element_text(size = font.size, vjust=0.3)) +
+        # theme(plot.title = element_text(hjust = 0)) +
+        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+    }
+    if (with.storage==T) {
+      if (p==1) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,f"]~"(g C "*plant^"-1"*")"))
+        # plot[[i]] = plot[[i]]  + theme(legend.key.height=unit(0.6,"line"))
+      } else if (p==2) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,w"]~"(g C "*plant^"-1"*")"))
+        # plot[[i]] = plot[[i]] + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 0.75), units="line"))
+      } else if (p==3) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,r"]~"(g C "*plant^"-1"*")"))
+      # } else if (p==4) {
+      #   plot[[i]] = plot[[i]] + ylab(expression(C["f,lit"]~"(g C "*plant^"-1"*")"))
+      } else if (p==4) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["n,t"]~"(g C "*plant^"-1"*")"))
+      } else {
+      #   plot[[i]] = plot[[i]] + ylab(expression(R[a]~"(g C "*plant^"-1"*")"))
+      }
+    } else {
+      if (p==1) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,f"]~"(g C "*plant^"-1"*")"))
+        # plot[[i]] = plot[[i]]  + theme(legend.key.height=unit(0.6,"line"))
+      } else if (p==2) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,w"]~"(g C "*plant^"-1"*")"))
+        # plot[[i]] = plot[[i]] + theme(plot.margin=unit(c(0.4, 0.4, 0.4, 0.75), units="line"))
+      } else if (p==3) {
+        plot[[i]] = plot[[i]] + ylab(expression(C["t,r"]~"(g C "*plant^"-1"*")"))
+      # } else if (p==4) {
+      #   plot[[i]] = plot[[i]] + ylab(expression(C["f,lit"]~"(g C "*plant^"-1"*")"))
+      # } else {
+      #   plot[[i]] = plot[[i]] + ylab(expression(R[a]~"(g C "*plant^"-1"*")"))
+      }
+    }
+    if (p>1) {
+      plot[[i]] = plot[[i]] + guides(colour=FALSE)
+    }
+    
+    # #----------------------------------------------------------------------------------------------------------------
+    # # keeps <- c("Date", "volume", "tnc.conc", "tnc.conc_SE")
+    # # tnc.data = tnc.data.processed[ , keeps, drop = FALSE]
+    # 
+    # if (p == 4) {
+    #   plot[[i]] = ggplot(summary.error.Cpool, aes(x=Date, y=parameter, group = volume, colour=volume)) +
+    #     geom_point(position=pd) +
+    #     geom_errorbar(position=pd,aes(ymin=parameter-value, ymax=parameter+value), colour="grey", width=2) +
+    #     geom_line(position=pd,data = summary.output.Cpool, aes(x = Date, y = value, group = volume, colour=volume)) +
+    #     ylab(paste(as.character(meas[p]),"(g C)")) + xlab("Month") +
+    #     labs(colour="Pot Volume (L)") +
+    #     theme_bw() +
+    #     annotate("text", x = min(summary.output.Cpool$Date), y = max(summary.output.Cpool$value), size = font.size-7, label = paste(title[p])) +
+    #     theme(legend.title = element_text(colour="black", size=font.size)) +
+    #     theme(legend.text = element_text(colour="black", size = font.size)) +
+    #     theme(legend.position = c(0.17,0.7)) +
+    #     theme(legend.key = element_blank()) +
+    #     theme(text = element_text(size=font.size)) +
+    #     theme(axis.title.x = element_blank()) +
+    #     theme(axis.title.y = element_text(size = font.size, vjust=0.3)) +
+    #     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+    #     ylab(expression(S[leaf]~"(% of"~M[leaf]~")")) + guides(colour=FALSE)
+    # }
+    # #----------------------------------------------------------------------------------------------------------------
+    
+  }
+  
+  png("output/Figure_5_modelled_biomass.png", units="px", width=1600, height=1300, res=220)
+  print (do.call(grid.arrange,  plot))
+  dev.off()
+  
+  # # #----------------------------------------------------------------------------------------------------------------
+  # # # Represent Sleaf as a concentration of Mleaf instead of total mass
+  # if (p == 4) {
+  #   summary.output.Mleaf = subset(summary.output,variable %in% "Mleaf.modelled")
+  #   summary.output.Sleaf = subset(summary.output,variable %in% "Sleaf.modelled")
+  #   summary.error.Sleaf = subset(summary.error,variable %in% "Sleaf_SD")
+  #   summary.output.Sleaf$value = summary.output.Sleaf$value / summary.output.Mleaf$value * 100
+  #   summary.output.Sleaf = summary.output.Sleaf[,-c(5,6)]
+  #   
+  #   # summary.error.Sleaf$value = summary.error.Sleaf$value / lm.daily.m$leafmass * 100
+  #   leafmass.daily = read.csv("processed_data/Cleaf_daily_data.csv") # Unit gC per gC plant
+  #   leafmass.daily = leafmass.daily[with(leafmass.daily, order(volume,Date)), ]
+  #   summary.error.Sleaf$value = ((summary.error.Sleaf$value*summary.error.Sleaf$value + leafmass.daily$leafmass_SE*leafmass.daily$leafmass_SE)/2)^0.5 / lm.daily.m$leafmass * 100
+  #   summary.error.Sleaf$parameter = summary.error.Sleaf$parameter / lm.daily.m$leafmass * 100
+  #   summary.error.Sleaf = summary.error.Sleaf[,-c(6,7)]
+  #   
+  #   pd <- position_dodge(4) # move the overlapped errorbars horizontally
+  #   plot[[i]] = ggplot(summary.error.Sleaf, aes(x=Date, y=parameter, group = volume, colour=volume)) +
+  #     geom_errorbar(position=pd,aes(ymin=parameter-value, ymax=parameter+value), colour="grey", width=0.2) +
+  #     geom_line(position=pd,data = summary.output.Sleaf, aes(x = Date, y = value, group = volume, colour=volume)) +
+  #     geom_point(position=pd) +
+  #     # ylab("Sleaf (g C)") + xlab("Month") +
+  #     ylab(paste(as.character(meas[p]),"(g C)")) + xlab("Month") +
+  #     labs(colour="Pot Volume (L)") +
+  #     theme_bw() +
+  #     annotate("text", x = min(summary.output.Sleaf$Date), y = max(summary.output.Sleaf$value), size = font.size-7, label = paste(title[p])) +
+  #     theme(legend.title = element_text(colour="black", size=font.size)) +
+  #     theme(legend.text = element_text(colour="black", size = font.size)) +
+  #     theme(legend.position = c(0.17,0.7)) +
+  #     theme(legend.key = element_blank()) +
+  #     theme(text = element_text(size=font.size)) +
+  #     theme(axis.title.x = element_blank()) +
+  #     theme(axis.title.y = element_text(size = font.size, vjust=0.3)) +
+  #     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  #     ylab(expression(S[leaf]~"(% of"~M[leaf]~")")) + guides(colour=FALSE)
+  # }
+  # 
+  # png("output/Figure_5_modelled_biomass_Sleaf_conc.png", units="px", width=2200, height=1600, res=220)
+  # print (do.call(grid.arrange,  plot))
+  # dev.off()
+  # # #----------------------------------------------------------------------------------------------------------------
+  
+}
+
+#----------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------
+
