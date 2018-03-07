@@ -270,7 +270,8 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
           # if ( log(runif(1, min = 0, max =1)) < logalpha && candidatepValues$af[1] + candidatepValues$as[1] <= 1
           #      && candidatepValues$as[1] >= 0 && candidatepValues$af[1] >= 0 && candidatepValues$af[2] >= 0 && candidatepValues$af[3] >= 0 && candidatepValues$af[4] >= 0) {
           if (no.param.par.var == 4) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2 + candidatepValues$k[4]*(nrow(data.set))^3) >= 0
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2 + candidatepValues$k[4]*(nrow(data.set))^3) <= 1
+                 && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2 + candidatepValues$k[4]*(nrow(data.set))^3) >= 0
                  && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2 + candidatepValues$as[4]*(nrow(data.set))^3) >= 0
                  && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2 + candidatepValues$af[4]*(nrow(data.set))^3) >= 0
                  # && (1-candidatepValues$af[1]+candidatepValues$as[1]) >= 0
@@ -281,7 +282,8 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
               logL0 <- logL1
             }
           } else if (no.param.par.var == 3) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2) >= 0
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2) <= 1
+                 && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set)) + candidatepValues$k[3]*(nrow(data.set))^2) >=0
                  && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set)) + candidatepValues$as[3]*(nrow(data.set))^2) >= 0
                  && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2) >= 0
                  && (1 - (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set)) + candidatepValues$af[3]*(nrow(data.set))^2) - 
@@ -291,7 +293,8 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
               logL0 <- logL1
             }
           } else if (no.param.par.var == 2) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set))) >= 0
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set))) <= 1
+                 && (candidatepValues$k[1] + candidatepValues$k[2]*(nrow(data.set))) >= 0
                  && (candidatepValues$as[1] + candidatepValues$as[2]*(nrow(data.set))) >= 0
                  && (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set))) >= 0
                  && (1 - (candidatepValues$af[1] + candidatepValues$af[2]*(nrow(data.set))) - 
@@ -301,7 +304,8 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
               logL0 <- logL1
             }
           } else if (no.param.par.var == 1) {
-            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]) >= 0
+            if ( log(runif(1, min = 0, max =1)) < logalpha && (candidatepValues$k[1]) <= 1
+                 && (candidatepValues$k[1]) >= 0
                  && (candidatepValues$as[1]) >= 0
                  && (candidatepValues$af[1]) >= 0
                  && (1 - candidatepValues$af[1] - candidatepValues$as[1]) >= 0 ) {
@@ -1306,7 +1310,7 @@ plot.Modelled.biomass.great <- function(result,with.storage,treat.group) {
     meas = as.factor(c("LM","WM","RM"))
     res = as.factor(c("Mleaf.modelled","Mwood.modelled","Mroot.modelled","Cstorage.modelled"))
     error = as.factor(c("LM_SE","WM_SE","RM_SE"))
-    title = as.character(c("A","B","C"))
+    title = as.character(c("A","B","C","D"))
   } else {
     meas = as.factor(c("LM","WM","RM"))
     res = as.factor(c("Mleaf.modelled","Mwood.modelled","Mroot.modelled"))

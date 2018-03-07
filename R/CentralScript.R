@@ -39,7 +39,10 @@ source("R/functions_great_CBM.R")
 
 # #-------------------------------------------------------------------------------------
 #- This script imports and processes the raw GREAT experiment biomass data to model the carbon pools and fluxes using DA
-source("R/initial_biomass_data_processing.temperature.R")
+# source("R/initial_biomass_data_processing.temperature.R")
+# Script modification to add harvest Height and Diameter to estimate the harvest biomass to end the experiment on harvest
+source("R/initial_biomass_data_processing.temperature_v2.R")
+
 # rmd2rscript("report_initial_data_processing_wtc3.Rmd")
 # source("report_initial_data_processing_wtc3.R")
 # #-------------------------------------------------------------------------------------
@@ -54,11 +57,12 @@ plot.model.great()
 #- Read the processed data and clean the workspace from data pre-processing
 #  Processed data are placed in "processed_data" folder
 # source("R/read_data_great.R")
-#-------------------------------------------------------------------------------------
 
-# Model run using GREAT dataset (investigate the temperature effects by considering only the well-watered treatments)
-# Read the pre-processed data of GPP, Respiration and biomass
-# Data up to the end of experiment (29th February)
+#-------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------
+# # Model run using GREAT dataset (investigate the temperature effects by considering only the well-watered treatments)
+# # Read the pre-processed data of GPP, Respiration and biomass
+# # Data up to the end of experiment (29th February)
 # data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass from height and dia
 # names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
 # data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v2.csv")
@@ -68,17 +72,34 @@ plot.model.great()
 # data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
 # data.all$Date = as.Date(data.all$Date, format = "%Y-%m-%d")
 
-# Data up to the final harvest (22nd February)
-data.biomass = read.csv("processed_data/harvest_data.csv") # Direct harvest data
-names(data.biomass) = c("Room","Date","LA","LM","WM","RM","LA_SE","LM_SE","WM_SE","RM_SE")
-data.biomass$Date = as.Date(data.biomass$Date, format = "%d/%m/%Y")
+#-------------------------------------------------------------------------------------
+# # Data up to the final harvest (22nd February)
+# data.biomass = read.csv("processed_data/harvest_data.csv") # Direct harvest data
+# names(data.biomass) = c("Room","Date","LA","LM","WM","RM","LA_SE","LM_SE","WM_SE","RM_SE")
+# data.biomass$Date = as.Date(data.biomass$Date, format = "%d/%m/%Y")
+# 
+# data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA.csv")
+# keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
+# data.gpp = data.gpp[ , keeps, drop = FALSE]
+# names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
+# data.gpp$Date = as.Date(data.gpp$Date, format = "%Y-%m-%d")
+# data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
 
-data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA.csv") 
+#-------------------------------------------------------------------------------------
+# Data up to the final harvest (23rd February)
+# data.biomass = read.csv("processed_data/harvest_data.csv") # Direct harvest data
+data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass data
+names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
+data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
+data.biomass = data.biomass[data.biomass$Date < as.Date("2016-02-29"),]
+
+data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_23-02-2016.csv")
 keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
 data.gpp = data.gpp[ , keeps, drop = FALSE]
 names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
 data.gpp$Date = as.Date(data.gpp$Date, format = "%Y-%m-%d")
 data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
+#-------------------------------------------------------------------------------------
 
 # treat.group = as.factor(c("3","6")) # Assign all treatments
 treat.group = unique(as.factor(data.all$Room)) # Assign all treatments
@@ -155,10 +176,14 @@ result.cluster = list()
 bic.cluster = list()
 
 start <- proc.time() # Start clock
-result <- clusterMap(cluster, mcmc.great, with.storage=rep(T,6), model.comparison=rep(F,6), model.optimization=rep(F,6), 
-                     no.param.par.var=rep(3,6),
+# result <- clusterMap(cluster, mcmc.great, with.storage=rep(T,6), model.comparison=rep(F,6), model.optimization=rep(F,6), 
+#                      no.param.par.var=rep(3,6),
+#                      treat.group=treat.group,
+#                      MoreArgs=list(chainLength=3000))
+result <- clusterMap(cluster, mcmc.great, 
                      treat.group=treat.group,
-                     MoreArgs=list(chainLength=3000))
+                     MoreArgs=list(chainLength=3000,with.storage=T, model.comparison=F, model.optimization=F, 
+                                   no.param.par.var=4))
 
 time_elapsed_series <- proc.time() - start # End clock
 stopCluster(cluster)
