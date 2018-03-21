@@ -105,7 +105,7 @@ mcmc.great <- function(chainLength, no.param.par.var, treat.group, with.storage,
       
       if (no.param.par.var < 5) {
         # This script initializes the parameter setting
-        source("R/parameter_setting_great.R", local=TRUE) # initialize 'sf' prior differently for grouped treatments
+        source("R/parameter_setting_great.R", local=TRUE) # initialize parameters
         
       } else { # no.param.par.var > 5; weekly parameter setting) 
         j = c()
@@ -1198,7 +1198,7 @@ plot.Modelled.parameters.great <- function(result,with.storage,treat.group) {
         theme_bw() +
         theme(legend.title = element_text(colour="black", size=font.size)) +
         theme(legend.text = element_text(colour="black", size=font.size-3)) +
-        theme(legend.position = c(0.65,0.85)) +
+        theme(legend.position = c(0.4,0.9),legend.direction = "horizontal", legend.text.align = 0) +
         theme(legend.key = element_blank()) +
         theme(text = element_text(size=font.size)) +
         theme(axis.title.x = element_blank()) +

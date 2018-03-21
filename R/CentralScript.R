@@ -60,17 +60,24 @@ plot.model.great()
 
 #-------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------
-# # Model run using GREAT dataset (investigate the temperature effects by considering only the well-watered treatments)
-# # Read the pre-processed data of GPP, Respiration and biomass
-# # Data up to the end of experiment (29th February)
-# data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass from height and dia
-# names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
+# Model run using GREAT dataset (investigate the temperature effects by considering only the well-watered treatments)
+# Read the pre-processed data of GPP, Respiration and biomass
+# Data up to the end of experiment (29th February)
+data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass from height and dia
+names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
+data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
+data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-29"))))
 # data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v2.csv")
-# keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
-# data.gpp = data.gpp[ , keeps, drop = FALSE]
-# names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
-# data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
-# data.all$Date = as.Date(data.all$Date, format = "%Y-%m-%d")
+data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v3.csv") # Corrected by Dushan for diurnal temerature variation on 21/03/2018
+keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
+data.gpp = data.gpp[ , keeps, drop = FALSE]
+names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
+data.gpp$Date = as.Date(data.gpp$Date, format = "%Y-%m-%d")
+data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
+
+# # Test case 1 with higher GPP for room 6
+# data.all$GPP[data.all$Room == 5] = data.all$GPP[data.all$Room == 5] * 1.2
+# data.all$GPP[data.all$Room == 6] = data.all$GPP[data.all$Room == 6] * 1.2
 
 #-------------------------------------------------------------------------------------
 # # Data up to the final harvest (22nd February)
@@ -86,19 +93,20 @@ plot.model.great()
 # data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
 
 #-------------------------------------------------------------------------------------
-# Data up to the final harvest (23rd February)
-# data.biomass = read.csv("processed_data/harvest_data.csv") # Direct harvest data
-data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass data
-names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
-data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
-data.biomass = data.biomass[data.biomass$Date < as.Date("2016-02-29"),]
-
-data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_23-02-2016.csv")
-keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
-data.gpp = data.gpp[ , keeps, drop = FALSE]
-names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
-data.gpp$Date = as.Date(data.gpp$Date, format = "%Y-%m-%d")
-data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
+# # Data up to the final harvest (23rd February)
+# # data.biomass = read.csv("processed_data/harvest_data.csv") # Direct harvest data
+# data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass data
+# names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
+# data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
+# data.biomass = data.biomass[data.biomass$Date < as.Date("2016-02-29"),]
+# 
+# data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_23-02-2016.csv")
+# keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
+# data.gpp = data.gpp[ , keeps, drop = FALSE]
+# names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
+# data.gpp$Date = as.Date(data.gpp$Date, format = "%Y-%m-%d")
+# data.all = merge(data.gpp, data.biomass, by=c("Date","Room"), all=TRUE)
+#-------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------
 
 # treat.group = as.factor(c("3","6")) # Assign all treatments
@@ -128,7 +136,7 @@ p0 = ggplot(data.all, aes(x=Date, y=GPP, group = Room, colour=as.factor(Room))) 
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
 
 # png(file = "Output/GPP.png")
-pdf(file = "Output/GPP.pdf",width=10, height=5)
+pdf(file = "Output/GPP_v2.pdf",width=10, height=5)
 print (p0)
 dev.off() 
 #-------------------------------------------------------------------------------------
@@ -136,6 +144,13 @@ dev.off()
 #-------------------------------------------------------------------------------------
 #- Matching C balance of the entire experiment considering C inputs and outputs
 source("R/C_balance_great.R")
+
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
+# Calculate SLA from data
+source("R/sla_great.R")
+
 #-------------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------------
@@ -183,7 +198,7 @@ start <- proc.time() # Start clock
 result <- clusterMap(cluster, mcmc.great, 
                      treat.group=treat.group,
                      MoreArgs=list(chainLength=3000,with.storage=T, model.comparison=F, model.optimization=F, 
-                                   no.param.par.var=4))
+                                   no.param.par.var=3))
 
 time_elapsed_series <- proc.time() - start # End clock
 stopCluster(cluster)
