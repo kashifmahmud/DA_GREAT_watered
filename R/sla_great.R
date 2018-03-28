@@ -73,7 +73,7 @@ final.harvest$Rootmass = rowSums(final.harvest[,c("Rootmass", "Rootmass_sub")], 
 final.harvest[c("Leafarea_sub","Leafmass_sub","Stemmass_sub","Rootmass_sub")] = NULL
 final.harvest[ , c("Leafmass", "Stemmass", "Rootmass")] = final.harvest[ , c("Leafmass", "Stemmass", "Rootmass")]/1000 # Unit conversion from mg to g
 # final.harvest$Leafarea = final.harvest$Leafarea / 10000  # Unit conversion from cm3 to m3
-keeps = c("Room","Prov","Leafarea","Leafmass")
+keeps = c("Room","Prov","Height","Leafarea","Leafmass")
 final.harvest.set = final.harvest[ , keeps, drop = FALSE]
 final.harvest.set$sla = final.harvest.set$Leafarea / final.harvest.set$Leafmass
 
@@ -96,26 +96,35 @@ height.dia$Date = as.Date(height.dia$Date, format = "%d/%m/%Y")
 #-------------------------------------------------------------------------------------
 # Import initial harvest data
 initial.harvest = read.csv("Data/GHS39_GREAT_MAIN_BIOMASS_20160107_L2.csv")
-initial.harvest[ , c("Leafmass", "Stemmass", "Rootmass")] = initial.harvest[ , c("Leafmass", "Stemmass", "Rootmass")]
+# initial.harvest[ , c("Leafmass", "Stemmass", "Rootmass")] = initial.harvest[ , c("Leafmass", "Stemmass", "Rootmass")]
 initial.harvest$Height = initial.harvest$Height/10 # Unit conversion from mm to cm
 initial.harvest$Date = as.Date("2016-01-07")
 initial.harvest$Room = 0
+keeps = c("Room","Prov","Height","Leafarea","Leafmass")
+initial.harvest.set = initial.harvest[ , keeps, drop = FALSE]
+initial.harvest.set$sla = initial.harvest.set$Leafarea / initial.harvest.set$Leafmass
 
 #-------------------------------------------------------------------------------------
 # Import intermediate harvest 1 data
 int.harvest.1 = read.csv("Data/GHS39_GREAT_MAIN_BIOMASS_20160129_L2.csv")
 int.harvest.1 = int.harvest.1[int.harvest.1$W_treatment %in% as.factor("w"),]
-int.harvest.1[ , c("Leafmass", "Stemmass", "Rootmass")] = int.harvest.1[ , c("Leafmass", "Stemmass", "Rootmass")]
+# int.harvest.1[ , c("Leafmass", "Stemmass", "Rootmass")] = int.harvest.1[ , c("Leafmass", "Stemmass", "Rootmass")]
 int.harvest.1$Date = as.Date("2016-01-29")
 int.harvest.1 = unique(merge(int.harvest.1, height.dia[,c("Room","Pot")]))
+keeps = c("Room","Prov","Height","Leafarea","Leafmass")
+int.harvest.1.set = int.harvest.1[ , keeps, drop = FALSE]
+int.harvest.1.set$sla = int.harvest.1.set$Leafarea / int.harvest.1.set$Leafmass
 
 #-------------------------------------------------------------------------------------
 # Import intermediate harvest 2 data
 int.harvest.2 = read.csv("Data/GHS39_GREAT_MAIN_BIOMASS_20160210_L2.csv")
 int.harvest.2 = int.harvest.2[int.harvest.2$W_treatment %in% as.factor("w"),]
-int.harvest.2[ , c("Leafmass", "Stemmass", "Rootmass")] = int.harvest.2[ , c("Leafmass", "Stemmass", "Rootmass")]
+# int.harvest.2[ , c("Leafmass", "Stemmass", "Rootmass")] = int.harvest.2[ , c("Leafmass", "Stemmass", "Rootmass")]
 int.harvest.2$Date = as.Date("2016-02-10")
 int.harvest.2 = unique(merge(int.harvest.2, height.dia[,c("Room","Pot")]))
+keeps = c("Room","Prov","Height","Leafarea","Leafmass")
+int.harvest.2.set = int.harvest.2[ , keeps, drop = FALSE]
+int.harvest.2.set$sla = int.harvest.2.set$Leafarea / int.harvest.2.set$Leafmass
 
 int.harvest = rbind(int.harvest.1, int.harvest.2)
 int.harvest$sla = int.harvest$Leafarea / int.harvest$Leafmass
@@ -263,4 +272,19 @@ dev.off()
 
 #-------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------
+harvest.sla.height = rbind(int.harvest.1.set, int.harvest.2.set,final.harvest.set)
+
+plot = list() 
+plot[[1]] = ggplot(data = harvest.sla.height, aes(x = Height, y = sla, group = as.factor(Room), colour=as.factor(Room))) +
+  geom_point(shape=17, size=1) +
+  stat_smooth(method=lm, se = FALSE) +
+  labs(colour="Rooms") + ylab(expression("SLA"~"("*cm^"2"*" "*g^"-1"*")")) + xlab("Height (cm)") + 
+  ggtitle("SLA vs Height with temperature") +
+  theme_bw() + theme(legend.position = c(0.9,0.8),legend.key.height=unit(0.6,"line")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+png("output/Figure_sla_height_great.png", units="px", width=1600, height=1300, res=220)
+print (do.call(grid.arrange,  plot))
+dev.off()
+
 

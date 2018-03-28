@@ -68,7 +68,7 @@ names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM
 data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
 data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-29"))))
 # data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v2.csv")
-data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v3.csv") # Corrected by Dushan for diurnal temerature variation on 21/03/2018
+data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_v3.csv") # Corrected by Dushan for diurnal temperature variation on 21/03/2018
 keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
 data.gpp = data.gpp[ , keeps, drop = FALSE]
 names(data.gpp) = c("Date","Room","GPP","R_leaf","R_leaf_SE","R_wood","R_wood_SE","R_root","R_root_SE")
