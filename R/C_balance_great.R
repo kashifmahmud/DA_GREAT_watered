@@ -1,4 +1,5 @@
 # Matching C balance of the entire experiment considering C inputs and outputs
+treat.group = unique(as.factor(data.all$Room)) # Assign all treatments
 C.balance = data.frame(matrix(ncol = 7, nrow = length(treat.group)))
 names(C.balance) = c("Room","GPP","Rm","biomass","growth.resp","C.output","storage")
 C.balance$Room = treat.group

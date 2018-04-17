@@ -274,17 +274,56 @@ dev.off()
 #-------------------------------------------------------------------------------------
 harvest.sla.height = rbind(int.harvest.1.set, int.harvest.2.set,final.harvest.set)
 
+keeps = c("Room","Prov","Height","Leafarea","Leafmass")
+int.harvest.1.set = int.harvest.1[ , keeps, drop = FALSE]
+int.harvest.1.set$sla = int.harvest.1.set$Leafarea / int.harvest.1.set$Leafmass
+int.harvest.1.set$harvest = as.factor("First")
+int.harvest.2.set = int.harvest.2[ , keeps, drop = FALSE]
+int.harvest.2.set$sla = int.harvest.2.set$Leafarea / int.harvest.2.set$Leafmass
+int.harvest.2.set$harvest = as.factor("Second")
+final.harvest.set = final.harvest[ , keeps, drop = FALSE]
+final.harvest.set$sla = final.harvest.set$Leafarea / final.harvest.set$Leafmass
+final.harvest.set$harvest = as.factor("Final")
+harvest.sla.height = rbind(int.harvest.1.set, int.harvest.2.set,final.harvest.set)
+
+
 plot = list() 
-plot[[1]] = ggplot(data = harvest.sla.height, aes(x = Height, y = sla, group = as.factor(Room), colour=as.factor(Room))) +
-  geom_point(shape=17, size=1) +
-  stat_smooth(method=lm, se = FALSE) +
-  labs(colour="Rooms") + ylab(expression("SLA"~"("*cm^"2"*" "*g^"-1"*")")) + xlab("Height (cm)") + 
+plot[[1]] = ggplot() +
+  stat_smooth(data = harvest.sla.height, aes(x = Height, y = sla, group = as.factor(Room), colour=as.factor(Room)), method=lm, se = FALSE) +
+  geom_point(data = harvest.sla.height, aes(x = Height, y = sla, group = interaction(Room,harvest), colour=as.factor(Room), shape=as.factor(harvest))) +
+  labs(colour="Rooms",shape="Harvest") + ylab(expression("SLA"~"("*cm^"2"*" "*g^"-1"*")")) + xlab("Height (cm)") + 
   ggtitle("SLA vs Height with temperature") +
-  theme_bw() + theme(legend.position = c(0.9,0.8),legend.key.height=unit(0.6,"line")) +
+  theme_bw() + theme(legend.position = c(0.9,0.82),legend.key.height=unit(0.5,"line")) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 png("output/Figure_sla_height_great.png", units="px", width=1600, height=1300, res=220)
 print (do.call(grid.arrange,  plot))
 dev.off()
 
+
+#-------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------
+leaf.punch.sla <- summaryBy(sla ~ Room+Date, data=leaf.punch, FUN=c(mean,standard.error))
+names(leaf.punch.sla)[3:4] = c("sla", "sla_SE")
+leaf.punch.sla$datatype = as.factor("leafpunch")
+
+int.harvest.sla <- summaryBy(sla ~ Room+Date, data=int.harvest, FUN=c(mean,standard.error))
+names(int.harvest.sla)[3:4] = c("sla", "sla_SE")
+int.harvest.sla$datatype = as.factor("harvest")
+
+leaf.sla.compare = rbind(leaf.punch.sla,int.harvest.sla)
+  
+plot = list() 
+plot[[1]] = ggplot() +
+  geom_point(data = leaf.sla.compare, aes(x = Date, y = sla, group = interaction(Room,datatype), colour=as.factor(Room), shape=as.factor(datatype))) + 
+  geom_line(data = leaf.sla.compare, aes(x = Date, y = sla, group = interaction(Room,datatype), colour=as.factor(Room), linetype=as.factor(datatype))) +
+  scale_x_date(breaks = date_breaks("11 day"), labels = date_format("%b %d")) +
+  labs(colour="Rooms",shape="Data type",linetype="Data type") + ylab(expression("SLA"~"("*cm^"2"*" "*g^"-1"*")")) + xlab("Date") + 
+  # ggtitle("SLA vs Height with temperature") +
+  theme_bw() + theme(legend.position = c(0.7,0.6),legend.key.height=unit(0.6,"line"),legend.direction = "horizontal") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+png("output/Figure_sla_leafpunch.png", units="px", width=1600, height=1300, res=220)
+print (do.call(grid.arrange,  plot))
+dev.off()
 
