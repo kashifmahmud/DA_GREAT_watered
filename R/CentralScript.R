@@ -66,13 +66,13 @@ data.biomass = read.csv("processed_data/modelled_data.csv") # Estimated biomass 
 names(data.biomass) = c("Date","Room","LA","LA_SE","LM","LM_SE","WM","WM_SE","RM","RM_SE")
 data.biomass$Date = as.Date(data.biomass$Date, format = "%Y-%m-%d")
 
-# Data up to the end of experiment (29th February)
-data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-29"))))
-data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_29-02-2016.csv")
+# # Data up to the end of experiment (29th February)
+# data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-29"))))
+# data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_29-02-2016.csv")
 
-# # Data up to the final harvest (23rd February)
-# data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-23")))) 
-# data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_23-02-2016.csv")
+# Data up to the final harvest (23rd February)
+data.biomass = subset(data.biomass,(Date %in% as.Date(c("2016-01-08","2016-01-18","2016-01-28","2016-02-08","2016-02-23"))))
+data.gpp = read.csv("processed_data/great_daily_carbon_gain_LA_23-02-2016.csv")
 
 keeps = c("Date","Room","GPP","R_leaf","R_leaf_se","R_stem","R_stem_se","R_root","R_root_se")
 data.gpp = data.gpp[ , keeps, drop = FALSE]
@@ -164,7 +164,7 @@ start <- proc.time() # Start clock
 #                      MoreArgs=list(chainLength=3000))
 result <- clusterMap(cluster, mcmc.great, 
                      treat.group=treat.group,
-                     MoreArgs=list(chainLength=5000,with.storage=T, model.comparison=F, model.optimization=F, 
+                     MoreArgs=list(chainLength=500,with.storage=T, model.comparison=F, model.optimization=F, 
                                    no.param.per.var=3))
 
 time_elapsed_series <- proc.time() - start # End clock
@@ -220,6 +220,11 @@ plot.Modelled.biomass.great(result,with.storage=T,treat.group)
 source("R/C_partitioning_great.R")
 #-------------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------------
+#- Perform sensitivity analysis and make figure 5
+# source("R/functions_CBM.R")
+source("R/Parameter_sensitivity_shifting_great.R")
+#-------------------------------------------------------------------------------------
 
 # #-------------------------------------------------------------------------------------
 # 

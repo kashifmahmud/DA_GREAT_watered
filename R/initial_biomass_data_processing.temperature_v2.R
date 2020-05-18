@@ -12,7 +12,7 @@
 #-----------------------------------------------------------------------------------------
 # Script to read and process the leaf datasets to Calculate leaf mass and daily leaf area
 # inputs
-rm(list=ls()) 
+# rm(list=ls()) 
 # setwd("/Users/kashifmahmud/WSU/Final_projects/DA_GREAT_experiment")
 source("R/load_packages_functions_CBM.R")
 source("R/functions_great.R")	 
@@ -192,6 +192,8 @@ harvest.data$D = rowMeans(harvest.data[,c("D1", "D2")], na.rm=TRUE)
 harvest.data = harvest.data[!(harvest.data$Rootmass==0),]
 harvest.data = harvest.data[with(harvest.data, order(Rootmass)), ]
 
+# write all harvest data
+write.csv(harvest.data, file = "processed_data/data_harvest_great.csv", row.names = FALSE)
 
 #-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------
@@ -998,6 +1000,7 @@ pred.data[,c(5:10)] = pred.data[,c(5:10)] * c1
 pred.data[,c(3:4)] = pred.data[,c(3:4)] / 10000
 write.csv(pred.data, file = "processed_data/modelled_data.csv", row.names = FALSE)
 # write.csv(avg.harvest.data, file = "processed_data/harvest_data.csv", row.names = FALSE)
+write.csv(height.dia, file = "processed_data/data.biomass.great.csv", row.names = FALSE)
 #-----------------------------------------------------------------------------------------
 
 
